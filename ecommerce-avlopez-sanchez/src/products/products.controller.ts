@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -13,7 +13,7 @@ export class ProductsController {
     return this.productsService.getProducts(1, 5);
   }
 
-  @Post('seeder')
+  @Get('seeder')
   addProduct() {
     return this.productsService.addProduct();
   }

@@ -1,33 +1,32 @@
-import { Controller, Body, Post } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  UseGuards,
+  Get,
+  Param,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { dataOrderDto } from './dto/create-order.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/Guards/auth.guard';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  @ApiBearerAuth()
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() dataOrder: dataOrderDto) {
     return this.ordersService.addOrder(dataOrder);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.ordersService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.ordersService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-  //   return this.ordersService.update(+id, updateOrderDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.ordersService.remove(+id);
-  // }
+  @ApiBearerAuth()
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  getOrderById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ordersService.getOrderById(id);
+  }
 }

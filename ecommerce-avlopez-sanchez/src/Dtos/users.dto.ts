@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -8,15 +9,24 @@ import {
 } from 'class-validator';
 
 export class UserDto {
+  @ApiProperty({
+    example: 'Maria Perez',
+  })
   @IsNotEmpty()
   @IsString()
   @Length(3, 80)
   name: string;
 
+  /**
+   * @example mariaperez@gmail.com
+   */
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  /**
+   * @example Contraseña1234+
+   */
   @IsNotEmpty()
   @IsStrongPassword({
     minLowercase: 1,
@@ -24,21 +34,46 @@ export class UserDto {
     minNumbers: 1,
     minSymbols: 1,
   })
-  @Length(3, 80)
+  @Length(3, 15)
   password: string;
 
+  /**
+   * @example Contraseña1234+
+   */
+  @IsNotEmpty()
+  @IsStrongPassword({
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
+  @Length(3, 15)
+  password2: string;
+
+  @ApiProperty({
+    example: 'calle principal 123',
+  })
   @IsString()
   @Length(3, 80)
   address: string;
 
+  /**
+   * @example 12025551234
+   */
   @IsNotEmpty()
   @IsNumber()
   phone: number;
 
+  /**
+   * @example Venezuela
+   */
   @IsString()
   @Length(5, 20)
   country?: string;
 
+  /**
+   * @example Maracaibo
+   */
   @IsString()
   @Length(5, 20)
   city?: string;

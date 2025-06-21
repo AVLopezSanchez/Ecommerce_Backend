@@ -28,7 +28,7 @@ export class User {
   @Column({ type: 'varchar', length: 50 })
   country: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'text' })
   address: string;
 
   @Column({ type: 'varchar', length: 50 })

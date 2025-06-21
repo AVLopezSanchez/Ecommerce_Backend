@@ -7,9 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('ecommerce')
-    .setDescription('Esta es una Api construida para el M$ de Henry')
+    .setTitle('Ecommerce M4 Backend')
+    .setDescription('Esta es una Api construida para el Backend M4 de Henry')
     .setVersion('1.0')
+    .addBearerAuth() //autentificacion por portador de token
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

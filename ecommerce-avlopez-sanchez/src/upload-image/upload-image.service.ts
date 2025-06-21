@@ -19,14 +19,9 @@ export class FileUploadService {
 
     const uploadResponse = await this.fileUploadRepository.uplaodImage(file);
 
-    await this.productsRepository.update(product.id, {
-      imgUrl: uploadResponse.url,
-    });
+    product.imgUrl = uploadResponse.secure_url;
+    const updateProduct = await this.productsRepository.save(product);
 
-    const updateproduct = await this.productsRepository.findOneBy({
-      id: productId,
-    });
-
-    return updateproduct;
+    return updateProduct;
   }
 }

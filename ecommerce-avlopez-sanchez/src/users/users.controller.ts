@@ -1,14 +1,30 @@
-import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Query,
+  UseInterceptors,
+  Param,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserDto } from 'src/Dtos/users.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/decorates/role.decorator';
+import { Role } from 'src/roles.enum';
+import { RolesGuard } from 'src/auth/Guards/roles.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { WithoutPasswordInterceptor } from 'src/Interceptors/without-password.interceptor';
+import { AuthGuard } from 'src/auth/Guards/auth.guard';
+import { WithoutAdminInterceptor } from 'src/Interceptors/without-admin.interceptor';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiBearerAuth()
   @Get()
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UseInterceptors(WithoutPasswordInterceptor)
   getUsers(@Query('page') page: string, @Query('limit') limit: string) {
     if (page && limit) {
       return this.usersService.getUsers(+page, +limit);
@@ -16,28 +32,11 @@ export class UsersController {
     return this.usersService.getUsers(1, 5);
   }
 
-  // @Get(':id')
-  // @UseGuards(AuthGuard)
-  // getUserById(@Param('id') id: string) {
-  //   return this.usersService.getUserById(id);
-  // }
-
-  @Post()
-  createUser(@Body() user: UserDto) {
-    return this.usersService.createUser(user);
+  @ApiBearerAuth()
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(WithoutPasswordInterceptor, WithoutAdminInterceptor)
+  getUserById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.getUserById(id);
   }
-
-  // @Put(':id')
-  // @UseGuards(AuthGuard)
-  // @UseGuards(AuthGuard)
-  // updateUser(@Param('id') id: string) {
-  //   return this.usersService.updateUserById(id);
-  // }
-
-  // @Delete(':id')
-  // @UseGuards(AuthGuard)
-  // @UseGuards(AuthGuard)
-  // deleteUser(@Param('id') id: string) {
-  //   return this.usersService.deleteUserById(id);
-  // }
 }
