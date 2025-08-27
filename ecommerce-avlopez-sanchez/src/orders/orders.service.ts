@@ -10,6 +10,7 @@ import { User } from 'src/users/user.entity';
 import { Product } from 'src/products/product.entity';
 import { OrderDetails } from 'src/order-details/entities/orderDetails.entity';
 import { dataOrderDto } from './dto/create-order.dto';
+import { Status } from './status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -46,13 +47,17 @@ export class OrdersService {
 
         if (!product) throw new NotFoundException('Producto no encontrado');
 
-        product.stock -= 1;
-        await this.productsRepository.save(product);
+        let quantity = element.quantity;
+        if (quantity === undefined || quantity <= 0)
+          throw new BadRequestException('Cantidad debe ser un numero positivo');
 
-        if (!product.stock)
+        if (product.stock < quantity)
           throw new BadRequestException('Producto no tiene stock');
 
-        totalPrice += Number(product.price);
+        product.stock -= quantity;
+        totalPrice += Number(product.price * quantity);
+        quantity = 0;
+        await this.productsRepository.save(product);
 
         return product;
       }),
@@ -80,6 +85,20 @@ export class OrdersService {
     const order: Orders | null = await this.ordersRepository.findOneBy({ id });
 
     if (!order) throw new NotFoundException(`La orden con id: ${id} no existe`);
+
+    return order;
+  }
+
+  async updateStatusOrder(orderId: string, status: Status) {
+    //buscar order, cambiar status de la orden, se va actualizar en la bd
+    const order: Orders | null = await this.ordersRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order)
+      throw new NotFoundException(`La orden con id ${orderId} no existe`);
+
+    order.status = status;
+    await this.ordersRepository.save(order);
 
     return order;
   }

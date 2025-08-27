@@ -17,6 +17,7 @@ import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { Roles } from 'src/decorates/role.decorator';
 import { Role } from 'src/roles.enum';
 import { RolesGuard } from 'src/auth/Guards/roles.guard';
+import { WithoutAdminInterceptor } from 'src/Interceptors/without-admin.interceptor';
 
 @Controller('files')
 export class FileUploadController {
@@ -56,5 +57,40 @@ export class FileUploadController {
     file: Express.Multer.File,
   ) {
     return await this.fileUploadService.uploadImage(file, productId);
+  }
+
+  @ApiBearerAuth()
+  @Post('uploadPerfilImage/:userId')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Archivo a subir',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'), WithoutAdminInterceptor)
+  async uploadPerfilImage(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /(jpeg|png|webp|jpg)$/ }),
+          new MaxFileSizeValidator({
+            maxSize: 200000,
+            message: 'File is too large',
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return await this.fileUploadService.uploadPerfilImage(file, userId);
   }
 }

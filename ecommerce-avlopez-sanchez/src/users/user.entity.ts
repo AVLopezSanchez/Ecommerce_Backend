@@ -34,6 +34,9 @@ export class User {
   @Column({ type: 'varchar', length: 50 })
   city: string;
 
+  @Column({ type: 'varchar', length: 100, default: 'No Image' })
+  perfilImg: string;
+
   @Column({ default: false, type: 'boolean' })
   isAdmin: boolean;
 

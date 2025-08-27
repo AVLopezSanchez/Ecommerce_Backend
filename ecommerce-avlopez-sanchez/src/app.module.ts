@@ -10,6 +10,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { UploadImageModule } from './upload-image/upload-image.module';
 import typeOrmConfig from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+// import { MercadopagoModule } from './mercadopago/mercadopago.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { JwtModule } from '@nestjs/jwt';
     OrdersModule,
     CategoriesModule,
     UploadImageModule,
+    // MercadopagoModule,
+    HttpModule,
   ],
   controllers: [],
   providers: [],

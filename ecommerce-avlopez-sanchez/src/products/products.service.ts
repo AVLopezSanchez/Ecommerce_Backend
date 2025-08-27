@@ -10,6 +10,7 @@ import { Product } from './product.entity';
 import { Categories } from 'src/categories/entities/category.entity';
 import { dataIncial } from 'src/dataInicial';
 import { CategoriesService } from 'src/categories/categories.service';
+import { DataProductDto } from 'src/Dtos/dataProductDto';
 
 @Injectable()
 export class ProductsService implements OnModuleInit {
@@ -71,5 +72,47 @@ export class ProductsService implements OnModuleInit {
 
     products = products.slice(start, finish);
     return products;
+  }
+
+  async addProductForm(data: DataProductDto) {
+    const productFound: Product | null = await this.productsRepository.findOne({
+      where: { name: data.name },
+    });
+
+    if (productFound)
+      throw new BadRequestException(`Producto ${data.name} ya existe`);
+
+    const categoryFound: Categories | null =
+      await this.categoriesRepository.findOne({
+        where: { name: data.category },
+      });
+
+    if (!categoryFound)
+      throw new NotFoundException(`No existe la categoria ${data.category}`);
+    if (!productFound) {
+      const newProduct: Product = this.productsRepository.create({
+        name: data.name,
+        price: data.price,
+        stock: data.stock,
+        description: data.description,
+        category_id: categoryFound,
+      });
+      await this.productsRepository.save(newProduct);
+      return newProduct;
+    }
+  }
+
+  async addOneProductStock(productId: string) {
+    //buscar el product, aumentar en 1 el stock, guardar cambios en bd;
+    const product: Product | null = await this.productsRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product)
+      throw new NotFoundException(`El product con id ${product} no existe`);
+
+    product.stock += 1;
+    await this.productsRepository.save(product);
+
+    return product;
   }
 }

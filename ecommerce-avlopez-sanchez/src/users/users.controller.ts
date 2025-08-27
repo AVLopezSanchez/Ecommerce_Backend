@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   Param,
   ParseUUIDPipe,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Roles } from 'src/decorates/role.decorator';
@@ -36,5 +37,16 @@ export class UsersController {
   @UseInterceptors(WithoutAdminInterceptor)
   getUserById(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.getUserById(id);
+  }
+
+  @ApiBearerAuth()
+  @Put(':userId')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  changeUserRole(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Query('role') role: boolean,
+  ) {
+    return this.usersService.changeUserRole(userId, role);
   }
 }

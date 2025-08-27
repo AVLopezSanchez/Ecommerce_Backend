@@ -3,9 +3,13 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { WithoutPasswordInterceptor } from './Interceptors/without-password.interceptor';
+import { auth } from 'express-openid-connect';
+import { config as auth0Config } from './config/auth0.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(auth(auth0Config));
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Ecommerce M4 Backend')
@@ -15,7 +19,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api2', app, document);
 
   app.useGlobalInterceptors(new WithoutPasswordInterceptor());
 

@@ -27,6 +27,9 @@ export class Product {
   @Column({ default: 1, type: 'integer', nullable: false })
   stock: number;
 
+  @Column({ default: 0, type: 'integer', nullable: false })
+  quantity: number;
+
   @Column({ default: 'No image' })
   imgUrl: string;
 

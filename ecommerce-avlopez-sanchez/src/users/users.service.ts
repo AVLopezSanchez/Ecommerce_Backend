@@ -29,4 +29,19 @@ export class UsersService {
 
     return userFound;
   }
+
+  async changeUserRole(userId: string, role: boolean) {
+    // buscar el usuario, modificar el role, guardar el cambio
+    const user: User | null = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user)
+      throw new NotFoundException(`El usuario con id ${userId} no existe`);
+
+    user.isAdmin = role;
+    await this.usersRepository.save(user);
+
+    return user;
+  }
 }
