@@ -4,14 +4,14 @@ exports.connectionSource = void 0;
 const config_1 = require("@nestjs/config");
 const dotenv_1 = require("dotenv");
 const typeorm_1 = require("typeorm");
-(0, dotenv_1.configDotenv)({ path: '../.env' });
+(0, dotenv_1.configDotenv)({ path: '.env' });
 const config = {
     type: 'postgres',
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
-    host: 'localhost',
-    username: 'postgres',
-    password: '4517797isv',
-    database: 'practica',
+    host: process.env.DB_HOST,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     synchronize: true,
     logging: ['error'],
     dropSchema: false,

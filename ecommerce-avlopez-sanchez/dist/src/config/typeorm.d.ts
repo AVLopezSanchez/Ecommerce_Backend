@@ -2,10 +2,10 @@ import { DataSource } from 'typeorm';
 declare const _default: (() => {
     type: string;
     port: number;
-    host: string;
-    username: string;
-    password: string;
-    database: string;
+    host: string | undefined;
+    username: string | undefined;
+    password: string | undefined;
+    database: string | undefined;
     synchronize: boolean;
     logging: string[];
     dropSchema: boolean;
@@ -14,10 +14,10 @@ declare const _default: (() => {
 }) & import("@nestjs/config").ConfigFactoryKeyHost<{
     type: string;
     port: number;
-    host: string;
-    username: string;
-    password: string;
-    database: string;
+    host: string | undefined;
+    username: string | undefined;
+    password: string | undefined;
+    database: string | undefined;
     synchronize: boolean;
     logging: string[];
     dropSchema: boolean;
