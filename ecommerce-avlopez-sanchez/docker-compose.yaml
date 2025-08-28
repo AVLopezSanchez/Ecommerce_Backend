@@ -1,6 +1,6 @@
 services:
   nestapp:
-    build: Ecommerce_Backend:latest
+    build: avlopez/ecommerce-back:latest
     ports:
       - '3001:3000'
     env_file:
